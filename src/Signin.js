@@ -9,6 +9,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import swal from 'sweetalert';
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 function Signin() {
+  const navigate = useNavigate()
   const classes = useStyles();
   const [inputs, setInputs] = useState({});
 
@@ -55,8 +57,7 @@ function Signin() {
     var raw = JSON.stringify({
       username: inputs.username,
       password: inputs.password,
-      access_token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImlkIjoiNSIsImNyZWF0ZWRBdCI6IjIwMjItMDYtMjBUMDI6MDY6MzIuNjQ3WiIsInVwZGF0ZWRBdCI6IjIwMjItMDctMDFUMDU6MjA6MzYuOTgyWiIsImRlbGV0ZWRBdCI6bnVsbCwiZW1wbG95ZWVJZCI6IjAwMDAiLCJ1c2VybmFtZSI6IkRFVlVTRVIiLCJmaXJzdG5hbWUiOiIiLCJsYXN0TmFtZSI6IiIsIm5pY2tuYW1lIjoiIiwidGVhbSI6IkIiLCJyb2xlIjoiQURNSU4iLCJpc0FjdGl2ZSI6dHJ1ZX0sImlhdCI6MTY1ODIyMjU4MCwiZXhwIjoxNjU4MjY1NzgwfQ.qNejd5hdywzWdn1nZEatVOLOd5o0OKbFPJvIqy_Rlek",
+      
     });
 
     var requestOptions = {
@@ -69,11 +70,14 @@ function Signin() {
     fetch("http://api.nitirat.co.th/auth/login", requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        console.log(result)
-      if(result.status === "ok") {
+        console.log("resualt--->", result)
+      if(result.statusCode == "200") {
         swal("success", result.message, "success",{
           button: false,
           timer: 2000,
+        }).then((value) => {
+          localStorage.setItem('token', result.access_token)
+          navigate('/profile');
         })
       }else{
         swal("Failed", result.message, "error",{
